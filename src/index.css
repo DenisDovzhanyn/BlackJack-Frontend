@@ -1,0 +1,23 @@
+html {
+    width: 100vw;
+    height: 100vh;
+}
+
+
+
+
+body {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at center, green, rgb(10, 68, 10), black 120%);
+    
+    box-shadow: inset 0px 20px 20px 0px black,
+     inset 0px -20px 20px 0px black;
+}
+
+#root {
+    width: 100vw;
+    height: 100vh;
+}

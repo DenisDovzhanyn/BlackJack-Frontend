@@ -1,0 +1,77 @@
+#loginPage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#formCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    min-width: 350px;
+    min-height: 500px;
+}
+
+#loginCardImage {
+    height: 300px;
+    min-width: 100%;
+    min-height: auto;
+}
+#inputContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#buttonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.loginCardInput {
+    all: unset;
+    background-color: rgb(216, 212, 212);
+    border-radius: 7px;
+    border: black solid 1px;
+    width: 80%;
+    height: 25px;
+    padding-left: 10px;
+}
+.loginCardInput:hover {
+    cursor:text
+}
+.loginCardButton {
+    all: unset;
+    background-color: rgb(216, 212, 212);
+    border: black solid 1px;
+    border-radius: 10px;
+    width: 40%;
+    height: 40px;
+    text-align: center;
+}
+.loginCardButton:hover {
+    cursor: pointer;
+}
+
+
+
+
+@media screen and (max-height: 800px) {
+    #loginCardImage {
+        height: 250px;
+    }
+}
+@media screen and (max-height: 500px) {
+    #loginCardImage {
+        display: none;
+    }
+}

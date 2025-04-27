@@ -10,10 +10,8 @@ export const Login = () => {
 
     const {cookie, setCookie} = useContext(isLoggedInContext)
 
-    const handleOnClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        const buttonPressed =  event.currentTarget.innerHTML
-        const resp = buttonPressed == 'Login' ? await sendLogin(username, password) : 'hahaha what the hell'
-        console.log(resp)
+    const handleOnClick = (source: string) => async () => {
+        const resp = source == 'Login' ? await sendLogin(username, password) : 'hahaha what the hell'
         if (resp instanceof Error) setError(resp.message)
             else setCookie(resp)
     }
@@ -31,8 +29,8 @@ export const Login = () => {
                     {error ? <p style={{color: 'white', margin: 0, padding: 0}}>{error}</p> : ''}
                 </div>
                 <div id="buttonContainer">
-                    <button className="loginCardButton" onClick={handleOnClick}>Register</button>
-                    <button className="loginCardButton" onClick={handleOnClick}>Login</button>
+                    <button className="loginCardButton" onClick={handleOnClick('Register')}>Register</button>
+                    <button className="loginCardButton" onClick={handleOnClick('Login')}>Login</button>
                 </div>
             </div>
 

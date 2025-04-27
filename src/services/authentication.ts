@@ -1,8 +1,6 @@
 
 
 export const sendLogin = async (username: string, password: string) => {
-    let err = ''
-
     try {
         const resp = await fetch(`${import.meta.env.VITE_BASE_API}/auth/login`,
             {
@@ -15,10 +13,7 @@ export const sendLogin = async (username: string, password: string) => {
         )
         const respJson = await resp.json()
 
-        if (resp.status != 200) {
-            err = respJson.error
-            return Error(err)
-        }
+        if (resp.status != 200) return Error(respJson.error)
         
         sessionStorage.setItem('hasCookie', respJson.hasCookie)
         return respJson.hasCookie

@@ -1,19 +1,20 @@
 import React, { ChangeEvent, useContext, useState } from "react"
 import './login.css'
 import playingCard from '../assets/SVG-cards-1.3/black-playing-card-back-25478.svg'
-import { sendLogin } from "../services/authentication"
+import { sendLoginOrRegister } from "../services/authentication"
 import { isLoggedInContext } from "../isLoggedInContext"
 export const Login = () => {
     const [error, setError] = useState('')
     const [password, setPassword] = useState('')
     const [username, setUsername] = useState('')
 
-    const {cookie, setCookie} = useContext(isLoggedInContext)
+    const {id, setId} = useContext(isLoggedInContext)
 
     const handleOnClick = (source: string) => async () => {
-        const resp = source == 'Login' ? await sendLogin(username, password) : 'hahaha what the hell'
+        const resp = await sendLoginOrRegister(username, password, source == 'Login' ? true : false)
+        
         if (resp instanceof Error) setError(resp.message)
-            else setCookie(resp)
+            else setId(resp)
     }
     
     return (

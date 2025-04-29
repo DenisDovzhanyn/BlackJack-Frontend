@@ -1,3 +1,3 @@
 import { createContext } from "react"
 
-export const isLoggedInContext = createContext({cookie: '', setCookie: (_value: string) => {}})
+export const isLoggedInContext = createContext({id: '', setId: (_value: string) => {}})

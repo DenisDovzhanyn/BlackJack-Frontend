@@ -6,15 +6,15 @@ import { Login } from './login/login'
 
 
 function App() {
-  const [cookie, setCookie] = useState('')
+  const [id, setId] = useState('')
   
   useEffect(() => {
-    const hasCookie = sessionStorage.getItem('hasCookie')
-    if (hasCookie) setCookie(hasCookie)
+    const hasId = sessionStorage.getItem('id')
+    if (hasId) setId(hasId)
   }, [])
 
-  if (!cookie) return (
-    <isLoggedInContext.Provider value={{cookie, setCookie}}>
+  if (!id) return (
+    <isLoggedInContext.Provider value={{id, setId}}>
       <Login/>
     </isLoggedInContext.Provider>
     

@@ -1,8 +1,8 @@
 
 
-export const sendLogin = async (username: string, password: string) => {
+export const sendLoginOrRegister = async (username: string, password: string, isLogin: boolean) => {
     try {
-        const resp = await fetch(`${import.meta.env.VITE_BASE_API}/auth/login`,
+        const resp = await fetch(`${import.meta.env.VITE_BASE_API}/auth/${isLogin ? 'login' : 'register'}` ,
             {
                 method: 'POST',
                 credentials: 'include',
@@ -12,13 +12,13 @@ export const sendLogin = async (username: string, password: string) => {
             }
         )
         const respJson = await resp.json()
-
         if (resp.status != 200) return Error(respJson.error)
         
-        sessionStorage.setItem('hasCookie', respJson.hasCookie)
-        return respJson.hasCookie
+        sessionStorage.setItem('id', respJson.id)
+        return respJson.id
         
     } catch (error) {
         console.log(error)
     }
 }
+

@@ -11,10 +11,14 @@ export const Login = () => {
     const {id, setId} = useContext(isLoggedInContext)
 
     const handleOnClick = (source: string) => async () => {
-        const resp = await sendLoginOrRegister(username, password, source == 'Login' ? true : false)
+        const resp = await sendLoginOrRegister(username, password, source)
         
-        if (resp instanceof Error) setError(resp.message)
-            else setId(resp)
+        if (resp instanceof Error) {
+            setError(resp.message) 
+        } else {
+            sessionStorage.setItem('id', resp)
+            setId(resp)
+        }
     }
     
     return (
@@ -30,8 +34,8 @@ export const Login = () => {
                     {error ? <p style={{color: 'white', margin: 0, padding: 0}}>{error}</p> : ''}
                 </div>
                 <div id="buttonContainer">
-                    <button className="loginCardButton" onClick={handleOnClick('Register')}>Register</button>
-                    <button className="loginCardButton" onClick={handleOnClick('Login')}>Login</button>
+                    <button className="loginCardButton" onClick={handleOnClick('register')}>Register</button>
+                    <button className="loginCardButton" onClick={handleOnClick('login')}>Login</button>
                 </div>
             </div>
 

@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react'
 import { isLoggedInContext } from './isLoggedInContext'
 import './App.css'
 import { Login } from './login/login'
+import { Game } from './game/game'
 
 
 
@@ -21,9 +22,9 @@ function App() {
   )
 
   return (
-    <div>
-      what the fuck yo
-    </div>
+    <Game>
+
+    </Game>
   )
 }
 

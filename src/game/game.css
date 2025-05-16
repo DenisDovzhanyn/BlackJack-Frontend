@@ -7,8 +7,8 @@
 #left-side {
     height: 100%;
     width: 30%;
+    padding-left: 10px;
     color: rgb(255, 255, 255);
-    font-size: larger;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -23,17 +23,24 @@
     height: 100%;
     width: 30%;
 }
-
+#username-text {
+    padding-top: 10px;
+    font-size: 2.5em;
+}
 #balance-and-totalprofits-container {
     display: flex;
     flex-direction: column;
+    padding-bottom: 10px;
+    font-size: 2em;
 }
 #balance-container {
     display: flex;
     flex-direction: row;
+    gap: 10px;
 }
 
 #totalprofits-container {
     display: flex;
     flex-direction: row;
+    gap: 10px;
 }

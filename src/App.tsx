@@ -13,9 +13,12 @@ function App() {
   useEffect(() => {
     const hasId = sessionStorage.getItem('id')
     if (hasId) {
-      
+
       const getUserData = async () => {
         const resp = await getUserInfo(hasId)
+        //! I def should not be setting the id in a useeffect that depends on id lol
+        //! I am really tired i need to make sure this is changed
+        //TODO CHANGE THIS SO U DONT SET ID IN A USEEFFECT DEPENDENT ON ID
         if (resp instanceof Error || resp === undefined) {
           setId('')
         } else {

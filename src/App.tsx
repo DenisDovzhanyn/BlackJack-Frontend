@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     const hasId = sessionStorage.getItem('id')
     if (hasId) {
-      setId(hasId)
+      
       const getUserData = async () => {
         const resp = await getUserInfo(hasId)
         if (resp instanceof Error || resp === undefined) {
@@ -25,9 +25,9 @@ function App() {
 
       getUserData()
     }
-  }, [])
+  }, [id])
 
-  if (!id) return (
+  if (!user) return (
     <isLoggedInContext.Provider value={{id, setId}}>
       <Login/>
     </isLoggedInContext.Provider>
@@ -35,7 +35,7 @@ function App() {
   )
 
   return (
-    <Game>
+    <Game user={user}>
 
     </Game>
   )

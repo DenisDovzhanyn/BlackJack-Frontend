@@ -5,7 +5,7 @@ export const Game = ({user}: {user: User}) => {
     const [betAmount, setBetAmount] = useState(0)
     const [source, setSource] = useState('Bet Amount')
     const [gameState, setGameState] = useState(null)
-    const [isModalOpan, setIsModalOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     return (
         <div id='game-screen'>
@@ -33,12 +33,12 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='main-stage'>
-                <dialog id='bet-amount-modal' open={isModalOpan}>
+                <dialog id='bet-amount-modal' open={isModalOpen}>
                     <label id='modal-label'>
                         {source}
                         <input id='bet-input' type='number' value={betAmount == 0 ? '' : betAmount} onChange={(e) => setBetAmount(Number(e.target.value))}></input>
                     </label>
-                    <button id='modal-submit'>Bet</button>
+                    <button id='modal-submit'>Place</button>
                 </dialog>
                 <div id='dealer-side'>
 
@@ -54,9 +54,10 @@ export const Game = ({user}: {user: User}) => {
                 className='game-button' 
                 onClick={
                     () => {
+                    const sourcePreChange = source
                     setSource('Insurance Bet Amount')
                     setBetAmount(0)
-                    setIsModalOpen(true)
+                    setIsModalOpen(isModalOpen && sourcePreChange == 'Insurance Bet Amount' ? false : true)
                 }}>
                     Insurance Bet 
                 </button>
@@ -66,9 +67,10 @@ export const Game = ({user}: {user: User}) => {
                 className='game-button' 
                 onClick={
                     () => {
+                    const sourcePreChange = source
                     setSource('Bet Amount')
                     setBetAmount(0)
-                    setIsModalOpen(true)
+                    setIsModalOpen(isModalOpen && sourcePreChange == 'Bet Amount' ? false : true)
                 }}>
                     Place Bet 
                 </button>

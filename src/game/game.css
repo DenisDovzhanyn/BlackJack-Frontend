@@ -41,7 +41,7 @@
     width: 70%;
 }
 
-#bet-amount-modal {
+#bet-amount-modal:open {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -50,16 +50,23 @@
     border-radius: 5px;
     gap: 5px;
 }
+
 #modal-label {
     display: flex;
     flex-direction: column;
 }
 #bet-input {
+    border-style: solid;
+    border-color: gray;
+    border-width: 1px;
     text-align: center;
+    border-radius: 5px;
 }
 
 #modal-submit {
-
+    border-color: gray;
+    border-width: 1px;
+    border-radius: 5px;
 }
 #right-side {
     height: 100%;

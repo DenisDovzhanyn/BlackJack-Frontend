@@ -4,6 +4,8 @@ import { useState } from 'react'
 export const Game = ({user}: {user: User}) => {
     const [betAmount, setBetAmount] = useState(0)
     const [source, setSource] = useState('Bet Amount')
+    const [gameState, setGameState] = useState(null)
+    const [isModalOpan, setIsModalOpen] = useState(false)
 
     return (
         <div id='game-screen'>
@@ -31,7 +33,7 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='main-stage'>
-                <dialog id='bet-amount-modal' open>
+                <dialog id='bet-amount-modal' open={isModalOpan}>
                     <label>
                         {source}
                         <input id='bet-input' type='number' value={betAmount} onChange={(e) => setBetAmount(Number(e.target.value))}></input>
@@ -46,9 +48,27 @@ export const Game = ({user}: {user: User}) => {
             </div>
             <div id='right-side'>
                 
-                <button id='insurance-button' className='game-button' onClick={() => setSource('Insurance Bet Amount')}>Insurance Bet</button>
+                <button 
+                id='insurance-button' 
+                className='game-button' 
+                onClick={
+                    () => {
+                    setSource('Insurance Bet Amount')
+                    setIsModalOpen(true)
+                }}>
+                    Insurance Bet 
+                </button>
                 <button id='double-down-button' className='game-button'>Double Down</button>
-                <button id='bet-button' className='game-button' onClick={() => setSource('Bet Amount')}>Place Bet</button>
+                <button 
+                id='bet-button' 
+                className='game-button' 
+                onClick={
+                    () => {
+                    setSource('Bet Amount')
+                    setIsModalOpen(true)
+                }}>
+                    Place Bet 
+                </button>
                 
                
             </div>
@@ -56,4 +76,6 @@ export const Game = ({user}: {user: User}) => {
     ) //? How should i take input from user for insurance/regular bet?
     //? I could use a single input field and let them input it there
     //? OR I could use a modal and make a little pop up?
+    //? We also need to check whether we can place an insurance bet OR double down in the first
+    //? place. the button should be disabled if they cant place either
 }

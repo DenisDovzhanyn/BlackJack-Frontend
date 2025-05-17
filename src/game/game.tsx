@@ -3,6 +3,7 @@ import { User } from '../models/user'
 import { useState } from 'react'
 export const Game = ({user}: {user: User}) => {
     const [betAmount, setBetAmount] = useState(0)
+    const [source, setSource] = useState('Bet Amount')
 
     return (
         <div id='game-screen'>
@@ -32,8 +33,8 @@ export const Game = ({user}: {user: User}) => {
             <div id='main-stage'>
                 <dialog id='bet-amount-modal' open>
                     <label>
-                        {/* put source here (insurance bet amount or regular bet amount) */}
-                        <input id='bet-input' type='number' value={betAmount}></input>
+                        {source}
+                        <input id='bet-input' type='number' value={betAmount} onChange={(e) => setBetAmount(Number(e.target.value))}></input>
                     </label>
                 </dialog>
                 <div id='dealer-side'>
@@ -45,9 +46,9 @@ export const Game = ({user}: {user: User}) => {
             </div>
             <div id='right-side'>
                 
-                <button id='insurance-button' className='game-button'>Insurance Bet</button>
+                <button id='insurance-button' className='game-button' onClick={() => setSource('Insurance Bet Amount')}>Insurance Bet</button>
                 <button id='double-down-button' className='game-button'>Double Down</button>
-                <button id='bet-button' className='game-button'>Place Bet</button>
+                <button id='bet-button' className='game-button' onClick={() => setSource('Bet Amount')}>Place Bet</button>
                 
                
             </div>

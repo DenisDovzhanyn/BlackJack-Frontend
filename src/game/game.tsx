@@ -1,6 +1,8 @@
 import './game.css'
 import { User } from '../models/user'
+import { useState } from 'react'
 export const Game = ({user}: {user: User}) => {
+    const [betAmount, setBetAmount] = useState(0)
 
     return (
         <div id='game-screen'>
@@ -28,6 +30,12 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='main-stage'>
+                <dialog id='bet-amount-modal' open>
+                    <label>
+                        {/* put source here (insurance bet amount or regular bet amount) */}
+                        <input id='bet-input' type='number' value={betAmount}></input>
+                    </label>
+                </dialog>
                 <div id='dealer-side'>
 
                 </div>
@@ -36,8 +44,15 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='right-side'>
-
+                
+                <button id='insurance-button' className='game-button'>Insurance Bet</button>
+                <button id='double-down-button' className='game-button'>Double Down</button>
+                <button id='bet-button' className='game-button'>Place Bet</button>
+                
+               
             </div>
         </div>
-    )
+    ) //? How should i take input from user for insurance/regular bet?
+    //? I could use a single input field and let them input it there
+    //? OR I could use a modal and make a little pop up?
 }

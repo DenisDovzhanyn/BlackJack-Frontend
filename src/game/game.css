@@ -41,6 +41,26 @@
     width: 70%;
 }
 
+#bet-amount-modal {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    border: none;
+    border-radius: 5px;
+    gap: 5px;
+}
+#modal-label {
+    display: flex;
+    flex-direction: column;
+}
+#bet-input {
+    text-align: center;
+}
+
+#modal-submit {
+
+}
 #right-side {
     height: 100%;
     width: 30%;

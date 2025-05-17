@@ -34,10 +34,11 @@ export const Game = ({user}: {user: User}) => {
             </div>
             <div id='main-stage'>
                 <dialog id='bet-amount-modal' open={isModalOpan}>
-                    <label>
+                    <label id='modal-label'>
                         {source}
-                        <input id='bet-input' type='number' value={betAmount} onChange={(e) => setBetAmount(Number(e.target.value))}></input>
+                        <input id='bet-input' type='number' value={betAmount == 0 ? '' : betAmount} onChange={(e) => setBetAmount(Number(e.target.value))}></input>
                     </label>
+                    <button id='modal-submit'>Bet</button>
                 </dialog>
                 <div id='dealer-side'>
 
@@ -54,6 +55,7 @@ export const Game = ({user}: {user: User}) => {
                 onClick={
                     () => {
                     setSource('Insurance Bet Amount')
+                    setBetAmount(0)
                     setIsModalOpen(true)
                 }}>
                     Insurance Bet 
@@ -65,6 +67,7 @@ export const Game = ({user}: {user: User}) => {
                 onClick={
                     () => {
                     setSource('Bet Amount')
+                    setBetAmount(0)
                     setIsModalOpen(true)
                 }}>
                     Place Bet 
@@ -78,4 +81,6 @@ export const Game = ({user}: {user: User}) => {
     //? OR I could use a modal and make a little pop up?
     //? We also need to check whether we can place an insurance bet OR double down in the first
     //? place. the button should be disabled if they cant place either
+    //TODO FIX UGLINESS
+    
 }

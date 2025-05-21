@@ -41,6 +41,39 @@
     width: 70%;
 }
 
+#dealer-side {
+    height: 50%;
+}
+
+#player-side {
+    height: 50%;
+}
+
+#player-cards {
+    height: 70%;
+}
+
+#casino-chip-container {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+}
+
+.casino-chip {
+    height: 100px;
+    width: 100px;
+}
+
+#minus-side {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#plus-side {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
 #bet-amount-modal:open {
     position: absolute;
     display: flex;
@@ -75,9 +108,29 @@
     flex-direction: column;
     justify-content: end;
     align-items: end;
-    gap: 10px; 
 }
+#top-right {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+#bet-amount-display {
+    font-size: 2.5em;
+    color: white;
+    padding-top: 10px;
+    padding-right: 10px;
 
+}
+#bottom-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: end;
+    height: 50%;
+    width: 100%;
+    gap: 10px;
+}
 #bet-button {
     margin-bottom: 20px;
 }

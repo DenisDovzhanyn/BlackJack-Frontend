@@ -1,11 +1,22 @@
 import './game.css'
 import { User } from '../models/user'
 import { useState } from 'react'
+import minusFive from '../assets/SVG-cards-1.3/minusfive.svg'
+import minusTen from '../assets/SVG-cards-1.3/minus10.svg'
+import minusOneHundred from '../assets/SVG-cards-1.3/minus100.svg'
+import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
+import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
+import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
+import { number } from 'motion'
+
 export const Game = ({user}: {user: User}) => {
     const [betAmount, setBetAmount] = useState(0)
-    const [source, setSource] = useState('Bet Amount')
     const [gameState, setGameState] = useState(null)
-    const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const handleSetBetAmount = (amount: number) => {
+        if (betAmount + amount < 0 || betAmount + amount > user.balance) return
+        setBetAmount(betAmount + amount)
+    }
 
     return (
         <div id='game-screen'>
@@ -33,49 +44,49 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='main-stage'>
-                <dialog id='bet-amount-modal' open={isModalOpen}>
-                    <label id='modal-label'>
-                        {source}
-                        <input id='bet-input' type='number' value={betAmount == 0 ? '' : betAmount} onChange={(e) => setBetAmount(Number(e.target.value))}></input>
-                    </label>
-                    <button id='modal-submit'>Place</button>
-                </dialog>
                 <div id='dealer-side'>
 
                 </div>
                 <div id='player-side'>
+                    <div id='player-cards'>
 
+                    </div>
+                    <div id='casino-chip-container'>
+                        <div id='minus-side'>
+                            <img src={minusFive} className='casino-chip' onClick={() => handleSetBetAmount(-5)}/>
+                            <img src={minusTen} className='casino-chip' onClick={() => handleSetBetAmount(-10)}/>
+                            <img src={minusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(-100)}/>
+                        </div>
+                        <div id='plus-side'>
+                            <img src={plusFive} className='casino-chip' onClick={() => handleSetBetAmount(5)}/>
+                            <img src={plusTen} className='casino-chip' onClick={() => handleSetBetAmount(10)}/>
+                            <img src={plusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(100)}/>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id='right-side'>
+                <div id='top-right'>
+                    <div id='bet-amount-display'>
+                        Bet Amount: {betAmount}
+                    </div>
+                </div>
+                <div id='bottom-right'>
+                    <button 
+                    id='insurance-button' 
+                    className='game-button' 
+                    >
+                        Insurance Bet 
+                    </button>
+                    <button id='double-down-button' className='game-button'>Double Down</button>
+                    <button 
+                    id='bet-button' 
+                    className='game-button' 
+                    >
+                        Place Bet 
+                    </button>
                 
-                <button 
-                id='insurance-button' 
-                className='game-button' 
-                onClick={
-                    () => {
-                    const sourcePreChange = source
-                    setSource('Insurance Bet Amount')
-                    setBetAmount(0)
-                    setIsModalOpen(isModalOpen && sourcePreChange == 'Insurance Bet Amount' ? false : true)
-                }}>
-                    Insurance Bet 
-                </button>
-                <button id='double-down-button' className='game-button'>Double Down</button>
-                <button 
-                id='bet-button' 
-                className='game-button' 
-                onClick={
-                    () => {
-                    const sourcePreChange = source
-                    setSource('Bet Amount')
-                    setBetAmount(0)
-                    setIsModalOpen(isModalOpen && sourcePreChange == 'Bet Amount' ? false : true)
-                }}>
-                    Place Bet 
-                </button>
-                
-               
+               </div>
             </div>
         </div>
     ) //? How should i take input from user for insurance/regular bet?

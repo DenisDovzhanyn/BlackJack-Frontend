@@ -95,6 +95,6 @@ export const doubleDown = async (id: number) => {
         return respJson
     } catch (err) {
         console.log(err)
-        if (err instanceof Error) return error.message
+        if (err instanceof Error) return err.message
     }
 }

@@ -133,6 +133,12 @@ export const Game = ({user}: {user: User}) => {
                             <img src={minusTen} className='casino-chip' onClick={() => handleSetBetAmount(-10)}/>
                             <img src={minusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(-100)}/>
                         </div>
+                        <button className='game-button' id='hit-btn' disabled={gameState ? false : true}>
+                            Hit
+                        </button>
+                        <button className='game-button' id='stand-btn' disabled={gameState ? false : true}>
+                            Stand
+                        </button>
                         <div id='plus-side'>
                             <img src={plusFive} className='casino-chip' onClick={() => handleSetBetAmount(5)}/>
                             <img src={plusTen} className='casino-chip' onClick={() => handleSetBetAmount(10)}/>

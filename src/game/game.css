@@ -53,10 +53,14 @@
     height: 70%;
 }
 
+.card {
+    height: 100px;
+    width: 100px;
+}
 #casino-chip-container {
     display: flex;
     flex-direction: row;
-    align-content: space-between;
+    justify-content: space-between;
 }
 
 .casino-chip {

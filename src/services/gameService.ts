@@ -1,6 +1,6 @@
 
 
-export const hit = async (id: number) => {
+export const hit = async (id: string) => {
     try {
         const resp = await fetch(`${import.meta.env.VITE_BASE_API}/game/hit`,
             {
@@ -26,7 +26,7 @@ export const hit = async (id: number) => {
     }
 }
 
-export const placeBet = async (id: number, betAmount: number, isInsuranceBet: boolean) => {
+export const placeBet = async (id: string, betAmount: number, isInsuranceBet: boolean) => {
     try {
         const resp = await fetch(`${import.meta.env.VITE_BASE_API}/game/${isInsuranceBet ? 'insurance' : 'placebet'}`,
             {
@@ -76,7 +76,7 @@ export const stand = async (id: number) => {
     }
 }
 
-export const doubleDown = async (id: number) => {
+export const doubleDown = async (id: string) => {
     try {
         const resp = await fetch(`${import.meta.env.VITE_BASE_API}/game/doubledown`,
             {

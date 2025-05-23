@@ -8,14 +8,46 @@ import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
 import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
 import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
 import { number } from 'motion'
+import { placeBet } from '../services/gameService'
+import { GameDto } from '../models/game'
 
 export const Game = ({user}: {user: User}) => {
+    const assets = import.meta.glob<string>('../assets/SVG-cards-1.3/*.svg', {eager: true, query: '?url', import: 'default'});
+    const ASSET_PATH = '../assets/SVG-cards-1.3/'
     const [betAmount, setBetAmount] = useState(0)
-    const [gameState, setGameState] = useState(null)
+    const [gameState, setGameState] = useState<GameDto | null>(null)
+    const [error, setError] = useState('')
 
     const handleSetBetAmount = (amount: number) => {
         if (betAmount + amount < 0 || betAmount + amount > user.balance) return
         setBetAmount(betAmount + amount)
+    }
+
+    const handlePlaceBet = async (isInsuranceBet: boolean) => {
+        if (betAmount > user.balance ) {
+            setError('You dont have enough balance to place this bet')
+            return
+        } 
+
+        if (isInsuranceBet) {
+            if (betAmount > gameState!.betAmount / 2) {
+                setError('Insurance bet must be less than or equal to original bet amount')
+                return
+            }
+            const resp = await placeBet(user.id, betAmount, true)
+            if (resp instanceof Error) {
+                setError(resp.message)
+            } else {
+                setGameState(resp)
+            }
+        } else {
+            const resp = await placeBet(user.id, betAmount, false)
+            if (resp instanceof Error) {
+                setError(resp.message)
+            } else {
+                setGameState(resp)
+            }
+        }
     }
 
     return (
@@ -49,7 +81,18 @@ export const Game = ({user}: {user: User}) => {
                 </div>
                 <div id='player-side'>
                     <div id='player-cards'>
-
+                        {gameState?.playerHand.cards.map((card) => {
+                           if (card.name === 'Blank') {
+                            const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
+                            return <img className='card' src= {assets[url] ? assets[url] : ''}/>
+                           } else if (card.name !== 'Number') {
+                            const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
+                            return <img className='card' src={assets[url] ? assets[url] : ''} />
+                           } else {
+                            const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
+                            return <img className='card' src={assets[url] ? assets[url] : ''} />
+                           }
+                        })}
                     </div>
                     <div id='casino-chip-container'>
                         <div id='minus-side'>
@@ -74,14 +117,15 @@ export const Game = ({user}: {user: User}) => {
                 <div id='bottom-right'>
                     <button 
                     id='insurance-button' 
-                    className='game-button' 
-                    >
+                    className='game-button'
+                    onClick={() => {handlePlaceBet(true)}}>
                         Insurance Bet 
                     </button>
                     <button id='double-down-button' className='game-button'>Double Down</button>
                     <button 
                     id='bet-button' 
                     className='game-button' 
+                    onClick={() => {handlePlaceBet(false)}}
                     >
                         Place Bet 
                     </button>

@@ -8,7 +8,7 @@ import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
 import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
 import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
 import { number } from 'motion'
-import { placeBet } from '../services/gameService'
+import { hitOrStand, placeBet } from '../services/gameService'
 import { GameDto } from '../models/game'
 
 export const Game = ({user}: {user: User}) => {
@@ -24,6 +24,19 @@ export const Game = ({user}: {user: User}) => {
         if (betAmount + amount < 0 || betAmount + amount > user.balance) return
         setBetAmount(betAmount + amount)
     }
+
+    const handleHitOrStand = async (source: string) => {
+        const response = await hitOrStand(user.id!, source)
+
+        if (response instanceof Error) {
+            setError(response.message)
+            return
+        }
+
+        setGameState(response)
+        
+    }
+    
 
     const handlePlaceBet = async (isInsuranceBet: boolean) => {
         if (betAmount > user.balance ) {
@@ -133,10 +146,10 @@ export const Game = ({user}: {user: User}) => {
                             <img src={minusTen} className='casino-chip' onClick={() => handleSetBetAmount(-10)}/>
                             <img src={minusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(-100)}/>
                         </div>
-                        <button className='game-button' id='hit-btn' disabled={gameState ? false : true}>
+                        <button className='game-button' id='hit-btn' disabled={gameState ? false : true} onClick={() => {handleHitOrStand('hit')}}>
                             Hit
                         </button>
-                        <button className='game-button' id='stand-btn' disabled={gameState ? false : true}>
+                        <button className='game-button' id='stand-btn' disabled={gameState ? false : true} onClick={() => {handleHitOrStand('stand')}}>
                             Stand
                         </button>
                         <div id='plus-side'>

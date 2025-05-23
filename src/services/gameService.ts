@@ -1,8 +1,8 @@
 
 
-export const hit = async (id: string) => {
+export const hitOrStand = async (id: string, source: string) => {
     try {
-        const resp = await fetch(`${import.meta.env.VITE_BASE_API}/game/hit`,
+        const resp = await fetch(`${import.meta.env.VITE_BASE_API}/game/${source}`,
             {
                 method: 'POST',
                 credentials: 'include',

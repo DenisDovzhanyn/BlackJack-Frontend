@@ -43,6 +43,9 @@
 
 #dealer-side {
     height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #player-side {
@@ -51,11 +54,14 @@
 
 #player-cards {
     height: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card {
-    height: 100px;
-    width: 100px;
+    height: 200px;
+    width: 200px;
 }
 #casino-chip-container {
     display: flex;
@@ -154,4 +160,12 @@
 
 .game-button:hover {
     cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.5;
+
+}
+button:disabled:hover {
+    cursor: default;
 }

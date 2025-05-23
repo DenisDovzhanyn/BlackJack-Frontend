@@ -1,6 +1,6 @@
 import './game.css'
 import { User } from '../models/user'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import minusFive from '../assets/SVG-cards-1.3/minusfive.svg'
 import minusTen from '../assets/SVG-cards-1.3/minus10.svg'
 import minusOneHundred from '../assets/SVG-cards-1.3/minus100.svg'
@@ -16,6 +16,8 @@ export const Game = ({user}: {user: User}) => {
     const ASSET_PATH = '../assets/SVG-cards-1.3/'
     const [betAmount, setBetAmount] = useState(0)
     const [gameState, setGameState] = useState<GameDto | null>(null)
+    const [insuranceDisabled, setInsuranceDisabled] = useState(true)
+    const [doubleDownDisabled, setDoubleDownDisabled] = useState(false)
     const [error, setError] = useState('')
 
     const handleSetBetAmount = (amount: number) => {
@@ -50,6 +52,26 @@ export const Game = ({user}: {user: User}) => {
         }
     }
 
+    useEffect(() => {
+        if (gameState) {
+            if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
+                setInsuranceDisabled(false)
+            } else {
+                setInsuranceDisabled(true)
+            }
+            
+            if (gameState.turnCount !== 1) {
+                setDoubleDownDisabled(true)
+            } else {
+                setDoubleDownDisabled(false)
+            }
+
+        } else {
+            setInsuranceDisabled(true)
+            setDoubleDownDisabled(true)
+        }
+    }, [gameState])
+
     return (
         <div id='game-screen'>
             <div id='left-side'>
@@ -77,20 +99,31 @@ export const Game = ({user}: {user: User}) => {
             </div>
             <div id='main-stage'>
                 <div id='dealer-side'>
-
+                    {gameState?.dealerHand.cards.map((card) => {
+                        if (card.name === 'Blank') {
+                            const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
+                            return <img className='card' src= {assets[url] ? assets[url] : ''}/>
+                        } else if (card.name !== 'Number') {
+                            const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
+                            return <img className='card' src={assets[url] ? assets[url] : ''} />
+                        } else {
+                            const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
+                            return <img className='card' src={assets[url] ? assets[url] : ''} />
+                        }
+                    })}
                 </div>
                 <div id='player-side'>
                     <div id='player-cards'>
                         {gameState?.playerHand.cards.map((card) => {
                            if (card.name === 'Blank') {
-                            const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
-                            return <img className='card' src= {assets[url] ? assets[url] : ''}/>
+                                const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
+                                return <img className='card' src= {assets[url] ? assets[url] : ''}/>
                            } else if (card.name !== 'Number') {
-                            const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
-                            return <img className='card' src={assets[url] ? assets[url] : ''} />
+                                const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
+                                return <img className='card' src={assets[url] ? assets[url] : ''} />
                            } else {
-                            const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
-                            return <img className='card' src={assets[url] ? assets[url] : ''} />
+                                const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
+                                return <img className='card' src={assets[url] ? assets[url] : ''} />
                            }
                         })}
                     </div>
@@ -118,10 +151,11 @@ export const Game = ({user}: {user: User}) => {
                     <button 
                     id='insurance-button' 
                     className='game-button'
+                    disabled={insuranceDisabled}
                     onClick={() => {handlePlaceBet(true)}}>
                         Insurance Bet 
                     </button>
-                    <button id='double-down-button' className='game-button'>Double Down</button>
+                    <button id='double-down-button' className='game-button' disabled={doubleDownDisabled}>Double Down</button>
                     <button 
                     id='bet-button' 
                     className='game-button' 

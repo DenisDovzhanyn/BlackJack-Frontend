@@ -8,20 +8,24 @@ import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
 import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
 import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
 import { number } from 'motion'
-import { hitOrStand, placeBet } from '../services/gameService'
+import { hitOrStand, placeBet, doubleDown } from '../services/gameService'
 import { GameDto } from '../models/game'
+import { getUserInfo } from '../services/user'
 
 export const Game = ({user}: {user: User}) => {
     const assets = import.meta.glob<string>('../assets/SVG-cards-1.3/*.svg', {eager: true, query: '?url', import: 'default'});
     const ASSET_PATH = '../assets/SVG-cards-1.3/'
+    const [balance, setBalance] = useState(user.balance)
+    const [totalProfits, setTotalProfits] = useState(user.totalProfits)
     const [betAmount, setBetAmount] = useState(0)
     const [gameState, setGameState] = useState<GameDto | null>(null)
     const [insuranceDisabled, setInsuranceDisabled] = useState(true)
-    const [doubleDownDisabled, setDoubleDownDisabled] = useState(false)
+    const [doubleDownDisabled, setDoubleDownDisabled] = useState(true)
+    const [hitOrStandDisabled, setHitOrStandDisabled] = useState(true)
     const [error, setError] = useState('')
 
     const handleSetBetAmount = (amount: number) => {
-        if (betAmount + amount < 0 || betAmount + amount > user.balance) return
+        if (betAmount + amount < 0 || betAmount + amount > balance) return
         setBetAmount(betAmount + amount)
     }
 
@@ -37,9 +41,19 @@ export const Game = ({user}: {user: User}) => {
         
     }
     
+    const handleDoubleDown = async () => {
+        const response = await doubleDown(user.id)
+        console.log(response)
+        if (response instanceof Error) {
+            setError(response.message)
+            return
+        }
+
+        setGameState(response)
+    }
 
     const handlePlaceBet = async (isInsuranceBet: boolean) => {
-        if (betAmount > user.balance ) {
+        if (betAmount > balance ) {
             setError('You dont have enough balance to place this bet')
             return
         } 
@@ -60,29 +74,50 @@ export const Game = ({user}: {user: User}) => {
             if (resp instanceof Error) {
                 setError(resp.message)
             } else {
+                setBalance(balance - betAmount)
+                setTotalProfits(totalProfits - betAmount)
                 setGameState(resp)
             }
         }
     }
 
     useEffect(() => {
-        if (gameState) {
-            if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
-                setInsuranceDisabled(false)
-            } else {
-                setInsuranceDisabled(true)
-            }
-            
-            if (gameState.turnCount !== 1) {
-                setDoubleDownDisabled(true)
-            } else {
-                setDoubleDownDisabled(false)
-            }
-
-        } else {
+        if (!gameState) {
             setInsuranceDisabled(true)
             setDoubleDownDisabled(true)
+            setHitOrStandDisabled(true)
+            return
         }
+
+        if (!gameState.isGameOver) {
+            setHitOrStandDisabled(false)
+        } else {
+            const updateBalance = async () => {
+                const resp = await getUserInfo(user.id)
+                if (resp instanceof Error) {
+                    setError(resp.message)
+                    return
+                }
+                setBalance(resp!.balance)
+                setTotalProfits(resp!.totalProfits)
+            }
+            
+            updateBalance()
+            setHitOrStandDisabled(true)
+        } 
+
+        if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
+            setInsuranceDisabled(false)
+        } else {
+            setInsuranceDisabled(true)
+        }
+        
+        if (gameState.turnCount === 1 && !gameState.isGameOver && balance >= gameState.betAmount) {
+            setDoubleDownDisabled(false)
+        } else {
+            setDoubleDownDisabled(true)
+        }
+            
     }, [gameState])
 
     return (
@@ -97,7 +132,7 @@ export const Game = ({user}: {user: User}) => {
                             {'Balance:'}
                         </div>
                         <div id='balance-amount'>
-                            {user.balance}
+                            {balance}
                         </div>
                     </div>
                     <div id='totalprofits-container'>
@@ -105,7 +140,7 @@ export const Game = ({user}: {user: User}) => {
                             {'TotalProfits:'}
                         </div>
                         <div id='totalprofits-amount'>
-                            {user.totalProfits}
+                            {totalProfits}
                         </div>
                     </div>
                 </div>
@@ -146,10 +181,10 @@ export const Game = ({user}: {user: User}) => {
                             <img src={minusTen} className='casino-chip' onClick={() => handleSetBetAmount(-10)}/>
                             <img src={minusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(-100)}/>
                         </div>
-                        <button className='game-button' id='hit-btn' disabled={gameState ? false : true} onClick={() => {handleHitOrStand('hit')}}>
+                        <button className='game-button' id='hit-btn' disabled={hitOrStandDisabled} onClick={() => {handleHitOrStand('hit')}}>
                             Hit
                         </button>
-                        <button className='game-button' id='stand-btn' disabled={gameState ? false : true} onClick={() => {handleHitOrStand('stand')}}>
+                        <button className='game-button' id='stand-btn' disabled={hitOrStandDisabled} onClick={() => {handleHitOrStand('stand')}}>
                             Stand
                         </button>
                         <div id='plus-side'>
@@ -174,7 +209,7 @@ export const Game = ({user}: {user: User}) => {
                     onClick={() => {handlePlaceBet(true)}}>
                         Insurance Bet 
                     </button>
-                    <button id='double-down-button' className='game-button' disabled={doubleDownDisabled}>Double Down</button>
+                    <button id='double-down-button' className='game-button' onClick={() => {handleDoubleDown()}} disabled={doubleDownDisabled}>Double Down</button>
                     <button 
                     id='bet-button' 
                     className='game-button' 

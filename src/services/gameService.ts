@@ -47,7 +47,7 @@ export const placeBet = async (id: string, betAmount: number, isInsuranceBet: bo
         return respJson
     } catch (err) {
         console.log(err)
-        if (err instanceof Error) return err.message
+        if (err instanceof Error) return err
     }
 }
 
@@ -72,7 +72,7 @@ export const stand = async (id: number) => {
         return respJson
     } catch (err) {
         console.log(err)
-        if (err instanceof Error) return err.message
+        if (err instanceof Error) return err
     }
 }
 
@@ -91,10 +91,10 @@ export const doubleDown = async (id: string) => {
         const respJson = await resp.json()
 
         if (resp.status != 200) throw new Error(respJson.error)
-
+        
         return respJson
     } catch (err) {
         console.log(err)
-        if (err instanceof Error) return err.message
+        if (err instanceof Error) return err
     }
 }

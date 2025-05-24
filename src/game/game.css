@@ -39,17 +39,23 @@
 #main-stage {
     height: 100%;
     width: 70%;
+    align-content: center;
 }
 
 #dealer-side {
-    height: 50%;
+    height: 45%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+#middle-space {
+    text-align: center;
+    color: white;
+}
+
 #player-side {
-    height: 50%;
+    height: 45%;
 }
 
 #player-cards {

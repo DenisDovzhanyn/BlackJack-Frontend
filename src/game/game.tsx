@@ -43,7 +43,6 @@ export const Game = ({user}: {user: User}) => {
     
     const handleDoubleDown = async () => {
         const response = await doubleDown(user.id)
-        console.log(response)
         if (response instanceof Error) {
             setError(response.message)
             return
@@ -82,6 +81,10 @@ export const Game = ({user}: {user: User}) => {
     }
 
     useEffect(() => {
+        //* we only need to clear the error here right? if gamestate successfully changes then that means previous error
+        //* is gone and no longer a problem. 
+        setError('')
+
         if (!gameState) {
             setInsuranceDisabled(true)
             setDoubleDownDisabled(true)
@@ -160,6 +163,7 @@ export const Game = ({user}: {user: User}) => {
                         }
                     })}
                 </div>
+                <div id='middle-space'>{error ? error : ''}</div>
                 <div id='player-side'>
                     <div id='player-cards'>
                         {gameState?.playerHand.cards.map((card) => {

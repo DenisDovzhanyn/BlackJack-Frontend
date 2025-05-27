@@ -7,8 +7,7 @@ import minusOneHundred from '../assets/SVG-cards-1.3/minus100.svg'
 import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
 import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
 import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
-import { number,  } from 'motion'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion, scale } from 'motion/react'
 import { hitOrStand, placeBet, doubleDown } from '../services/gameService'
 import { GameDto } from '../models/game'
 import { getUserInfo } from '../services/user'
@@ -19,7 +18,7 @@ export const Game = ({user}: {user: User}) => {
     const [balance, setBalance] = useState(user.balance)
     const [balanceDifference, setBalanceDifference] = useState(0)
     const [totalProfits, setTotalProfits] = useState(user.totalProfits)
-    const [betAmount, setBetAmount] = useState(0)
+    const [betAmount, setBetAmount] = useState(5)
     const [gameState, setGameState] = useState<GameDto | null>(null)
     const [insuranceDisabled, setInsuranceDisabled] = useState(true)
     const [doubleDownDisabled, setDoubleDownDisabled] = useState(true)
@@ -27,7 +26,7 @@ export const Game = ({user}: {user: User}) => {
     const [error, setError] = useState('')
 
     const handleSetBetAmount = (amount: number) => {
-        if (betAmount + amount < 0 || betAmount + amount > balance) return
+        if (betAmount + amount < 5 || betAmount + amount > balance) return
         setBetAmount(() => betAmount + amount)
     }
 
@@ -61,7 +60,7 @@ export const Game = ({user}: {user: User}) => {
 
         if (isInsuranceBet) {
             if (betAmount > gameState!.betAmount / 2) {
-                setError(() => 'Insurance bet must be less than or equal to original bet amount')
+                setError(() => 'Insurance bet must be less than or equal to half of original bet amount')
                 return
             }
             const resp = await placeBet(user.id, betAmount, true)
@@ -160,34 +159,35 @@ export const Game = ({user}: {user: User}) => {
             </div>
             <div id='main-stage'>
                 <div id='dealer-side'>
-                    {gameState?.dealerHand.cards.map((card) => {
-                        if (card.name === 'Blank') {
-                            const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
-                            return <img className='card' src= {assets[url] ? assets[url] : ''}/>
-                        } else if (card.name !== 'Number') {
-                            const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
-                            return <img className='card' src={assets[url] ? assets[url] : ''} />
-                        } else {
-                            const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
-                            return <img className='card' src={assets[url] ? assets[url] : ''} />
-                        }
+                    <AnimatePresence mode='popLayout'>
+                        {gameState?.dealerHand.cards.map((card) => {
+                            if (card.name === 'Blank') {
+                                const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
+                                return <motion.img className='card' src= {assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.id+card.suit+card.name!}/>
+                            } else if (card.name !== 'Number') {
+                                const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
+                                return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}}  exit={{scale: 0}} key={card.id+card.suit+card.name!}/>
+                            } else {
+                                const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
+                                return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}}  exit={{scale: 0}} key={card.id+card.suit+card.name!}/>
+                            }
                     })}
+                    </AnimatePresence>
                 </div>
                 <div id='middle-space'>{error ? error : ''}</div>
                 <div id='player-side'>
                     <div id='player-cards'>
-                        {gameState?.playerHand.cards.map((card) => {
-                           if (card.name === 'Blank') {
-                                const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
-                                return <img className='card' src= {assets[url] ? assets[url] : ''}/>
-                           } else if (card.name !== 'Number') {
-                                const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
-                                return <img className='card' src={assets[url] ? assets[url] : ''} />
-                           } else {
-                                const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
-                                return <img className='card' src={assets[url] ? assets[url] : ''} />
-                           }
-                        })}
+                        <AnimatePresence mode='wait'>
+                            {gameState?.playerHand.cards.map((card) => {
+                                if (card.name !== 'Number') {
+                                    const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
+                                    return <motion.img className='card' src={assets[url] ? assets[url] : ''}  whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.id+card.suit+card.name!}/>
+                                } else {
+                                    const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
+                                    return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.id+card.suit+card.name!}/>
+                            }
+                            })}
+                        </AnimatePresence>
                     </div>
                     <div id='casino-chip-container'>
                         <div id='minus-side'>

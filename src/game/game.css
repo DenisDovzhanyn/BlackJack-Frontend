@@ -84,6 +84,7 @@
 .casino-chip {
     height: 100px;
     width: 100px;
+    border-radius: 50%;
 }
 
 #minus-side {
@@ -96,15 +97,6 @@
     flex-wrap: nowrap;
 }
 
-#bet-amount-modal:open {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    top: 50%;
-    border: none;
-    border-radius: 5px;
-    gap: 5px;
-}
 
 #modal-label {
     display: flex;
@@ -137,12 +129,19 @@
     display: flex;
     justify-content: end;
 }
+
 #bet-amount-display {
+    display: flex;
+    flex-direction: row;
     font-size: 2.5em;
     color: white;
     padding-top: 10px;
-    padding-right: 10px;
+    padding-right: 20px;
+    gap: 10px;
 
+}
+.bet-amount {
+    white-space: nowrap;
 }
 #bottom-right {
     display: flex;

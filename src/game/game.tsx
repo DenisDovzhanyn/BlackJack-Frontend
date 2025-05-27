@@ -19,6 +19,7 @@ export const Game = ({user}: {user: User}) => {
     const [balanceDifference, setBalanceDifference] = useState(0)
     const [totalProfits, setTotalProfits] = useState(user.totalProfits)
     const [betAmount, setBetAmount] = useState(5)
+    const [prevBetAmount, setPrevBetAmount] = useState(5)
     const [gameState, setGameState] = useState<GameDto | null>(null)
     const [insuranceDisabled, setInsuranceDisabled] = useState(true)
     const [doubleDownDisabled, setDoubleDownDisabled] = useState(true)
@@ -27,7 +28,8 @@ export const Game = ({user}: {user: User}) => {
 
     const handleSetBetAmount = (amount: number) => {
         if (betAmount + amount < 5 || betAmount + amount > balance) return
-        setBetAmount(() => betAmount + amount)
+        setPrevBetAmount(() => betAmount)
+        setBetAmount((previousBetAmount) => previousBetAmount + amount)
     }
 
     const handleHitOrStand = async (source: string) => {
@@ -74,9 +76,9 @@ export const Game = ({user}: {user: User}) => {
             if (resp instanceof Error) {
                 setError(resp.message)
             } else {
-                setBalance(() => balance - betAmount)
+                setBalance((prevBalance) => prevBalance - betAmount)
                 setBalanceDifference(() => -betAmount)
-                setTotalProfits(() => totalProfits - betAmount)
+                setTotalProfits((prevTotalProfits) => prevTotalProfits - betAmount)
                 setGameState(() => resp)
             }
         }
@@ -87,7 +89,7 @@ export const Game = ({user}: {user: User}) => {
         //* is gone and no longer a problem. 
         setError('')
 
-        if (!gameState) {
+        if (!gameState || gameState.isGameOver) {
             setInsuranceDisabled(() => true)
             setDoubleDownDisabled(() => true)
             setHitOrStandDisabled(() => true)
@@ -115,7 +117,7 @@ export const Game = ({user}: {user: User}) => {
         if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
             setInsuranceDisabled(() => false)
         } else {
-            setInsuranceDisabled(() =>true)
+            setInsuranceDisabled(() => true)
         }
         
         if (gameState.turnCount === 1 && !gameState.isGameOver && balance >= gameState.betAmount) {
@@ -191,20 +193,20 @@ export const Game = ({user}: {user: User}) => {
                     </div>
                     <div id='casino-chip-container'>
                         <div id='minus-side'>
-                            <img src={minusFive} className='casino-chip' onClick={() => handleSetBetAmount(-5)}/>
-                            <img src={minusTen} className='casino-chip' onClick={() => handleSetBetAmount(-10)}/>
-                            <img src={minusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(-100)}/>
+                            <motion.img src={minusFive} className='casino-chip' onClick={() => handleSetBetAmount(-5)} whileHover={{scale: 1.1}}/>
+                            <motion.img src={minusTen} className='casino-chip' onClick={() => handleSetBetAmount(-10)} whileHover={{scale: 1.1}}/>
+                            <motion.img src={minusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(-100)} whileHover={{scale: 1.1}}/>
                         </div>
-                        <button className='game-button' id='hit-btn' disabled={hitOrStandDisabled} onClick={() => {handleHitOrStand('hit')}}>
+                        <motion.button className='game-button' id='hit-btn' disabled={hitOrStandDisabled} onClick={() => {handleHitOrStand('hit')}} whileTap={{scale: 0.9}} whileHover={!hitOrStandDisabled ? {scale: 1.1} : ''}>
                             Hit
-                        </button>
-                        <button className='game-button' id='stand-btn' disabled={hitOrStandDisabled} onClick={() => {handleHitOrStand('stand')}}>
+                        </motion.button>
+                        <motion.button className='game-button' id='stand-btn' disabled={hitOrStandDisabled} onClick={() => {handleHitOrStand('stand')}} whileTap={{scale: 0.9}} whileHover={!hitOrStandDisabled ? {scale: 1.1} : ''}>
                             Stand
-                        </button>
+                        </motion.button>
                         <div id='plus-side'>
-                            <img src={plusFive} className='casino-chip' onClick={() => handleSetBetAmount(5)}/>
-                            <img src={plusTen} className='casino-chip' onClick={() => handleSetBetAmount(10)}/>
-                            <img src={plusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(100)}/>
+                            <motion.img src={plusFive} className='casino-chip' onClick={() => handleSetBetAmount(5)} whileHover={{scale: 1.1}}/>
+                            <motion.img src={plusTen} className='casino-chip' onClick={() => handleSetBetAmount(10)} whileHover={{scale: 1.1}}/>
+                            <motion.img src={plusOneHundred} className='casino-chip' onClick={() => handleSetBetAmount(100)} whileHover={{scale: 1.1}}/>
                         </div>
                     </div>
                 </div>
@@ -212,25 +214,43 @@ export const Game = ({user}: {user: User}) => {
             <div id='right-side'>
                 <div id='top-right'>
                     <div id='bet-amount-display'>
-                        Bet Amount: {betAmount}
+                        <div className='bet-amount'>
+                            {'Bet Amount:'}
+                        </div>
+                        <motion.div className='bet-amount' key={betAmount} animate={prevBetAmount > betAmount ? {scale: [0.95, 1]} : {scale: [1.05, 1]}} transition={{duration: 0.2}}>
+                            {betAmount}
+                        </motion.div>
                     </div>
                 </div>
                 <div id='bottom-right'>
-                    <button 
+                    <motion.button 
                     id='insurance-button' 
                     className='game-button'
                     disabled={insuranceDisabled}
+                    whileHover={!insuranceDisabled ? {scale: 1.1} : ''}
+                    whileTap={{scale: 0.9}}
                     onClick={() => {handlePlaceBet(true)}}>
                         Insurance Bet 
-                    </button>
-                    <button id='double-down-button' className='game-button' onClick={() => {handleDoubleDown()}} disabled={doubleDownDisabled}>Double Down</button>
-                    <button 
+                    </motion.button>
+                    <motion.button 
+                    id='double-down-button' 
+                    className='game-button' 
+                    whileHover={!doubleDownDisabled ? {scale: 1.1} : ''} 
+                    whileTap={{scale: 0.9}} 
+                    onClick={() => {handleDoubleDown()}} 
+                    disabled={doubleDownDisabled}>
+                        Double Down
+                    </motion.button>
+                    <motion.button 
                     id='bet-button' 
                     className='game-button' 
-                    onClick={() => {handlePlaceBet(false)}}
-                    >
+                    disabled={gameState ? (gameState.isGameOver ? false : true) : false}
+                    whileHover={gameState ? (gameState.isGameOver ? {scale: 1.1} : '') : {scale: 1.1}}
+                    whileTap={{scale: 0.9}}
+                    onClick={() => {handlePlaceBet(false)}
+                    }>
                         Place Bet 
-                    </button>
+                    </motion.button>
                 
                </div>
             </div>

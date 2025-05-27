@@ -7,7 +7,8 @@ import minusOneHundred from '../assets/SVG-cards-1.3/minus100.svg'
 import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
 import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
 import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
-import { number } from 'motion'
+import { number,  } from 'motion'
+import { motion } from 'motion/react'
 import { hitOrStand, placeBet, doubleDown } from '../services/gameService'
 import { GameDto } from '../models/game'
 import { getUserInfo } from '../services/user'
@@ -16,6 +17,7 @@ export const Game = ({user}: {user: User}) => {
     const assets = import.meta.glob<string>('../assets/SVG-cards-1.3/*.svg', {eager: true, query: '?url', import: 'default'});
     const ASSET_PATH = '../assets/SVG-cards-1.3/'
     const [balance, setBalance] = useState(user.balance)
+    const [balanceDifference, setBalanceDifference] = useState(0)
     const [totalProfits, setTotalProfits] = useState(user.totalProfits)
     const [betAmount, setBetAmount] = useState(0)
     const [gameState, setGameState] = useState<GameDto | null>(null)
@@ -26,56 +28,57 @@ export const Game = ({user}: {user: User}) => {
 
     const handleSetBetAmount = (amount: number) => {
         if (betAmount + amount < 0 || betAmount + amount > balance) return
-        setBetAmount(betAmount + amount)
+        setBetAmount(() => betAmount + amount)
     }
 
     const handleHitOrStand = async (source: string) => {
         const response = await hitOrStand(user.id!, source)
 
         if (response instanceof Error) {
-            setError(response.message)
+            setError(() => response.message)
             return
         }
 
-        setGameState(response)
+        setGameState(() => response)
         
     }
     
     const handleDoubleDown = async () => {
         const response = await doubleDown(user.id)
         if (response instanceof Error) {
-            setError(response.message)
+            setError(() => response.message)
             return
         }
 
-        setGameState(response)
+        setGameState(() => response)
     }
 
     const handlePlaceBet = async (isInsuranceBet: boolean) => {
         if (betAmount > balance ) {
-            setError('You dont have enough balance to place this bet')
+            setError(() => 'You dont have enough balance to place this bet')
             return
         } 
 
         if (isInsuranceBet) {
             if (betAmount > gameState!.betAmount / 2) {
-                setError('Insurance bet must be less than or equal to original bet amount')
+                setError(() => 'Insurance bet must be less than or equal to original bet amount')
                 return
             }
             const resp = await placeBet(user.id, betAmount, true)
             if (resp instanceof Error) {
-                setError(resp.message)
+                setError(() => resp.message)
             } else {
-                setGameState(resp)
+                setGameState(() => resp)
             }
         } else {
             const resp = await placeBet(user.id, betAmount, false)
             if (resp instanceof Error) {
                 setError(resp.message)
             } else {
-                setBalance(balance - betAmount)
-                setTotalProfits(totalProfits - betAmount)
-                setGameState(resp)
+                setBalance(() => balance - betAmount)
+                setBalanceDifference(() => -betAmount)
+                setTotalProfits(() => totalProfits - betAmount)
+                setGameState(() => resp)
             }
         }
     }
@@ -86,39 +89,40 @@ export const Game = ({user}: {user: User}) => {
         setError('')
 
         if (!gameState) {
-            setInsuranceDisabled(true)
-            setDoubleDownDisabled(true)
-            setHitOrStandDisabled(true)
+            setInsuranceDisabled(() => true)
+            setDoubleDownDisabled(() => true)
+            setHitOrStandDisabled(() => true)
             return
         }
 
         if (!gameState.isGameOver) {
-            setHitOrStandDisabled(false)
+            setHitOrStandDisabled(() => false)
         } else {
             const updateBalance = async () => {
                 const resp = await getUserInfo(user.id)
                 if (resp instanceof Error) {
-                    setError(resp.message)
+                    setError(() => resp.message)
                     return
                 }
-                setBalance(resp!.balance)
-                setTotalProfits(resp!.totalProfits)
+                if (resp!.balance !== balance) setBalanceDifference(() => resp!.balance - balance)
+                setBalance(() => resp!.balance)
+                setTotalProfits(() => resp!.totalProfits)
             }
             
             updateBalance()
-            setHitOrStandDisabled(true)
+            setHitOrStandDisabled(() => true)
         } 
 
         if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
-            setInsuranceDisabled(false)
+            setInsuranceDisabled(() => false)
         } else {
-            setInsuranceDisabled(true)
+            setInsuranceDisabled(() =>true)
         }
         
         if (gameState.turnCount === 1 && !gameState.isGameOver && balance >= gameState.betAmount) {
-            setDoubleDownDisabled(false)
+            setDoubleDownDisabled(() => false)
         } else {
-            setDoubleDownDisabled(true)
+            setDoubleDownDisabled(() => true)
         }
             
     }, [gameState])
@@ -137,6 +141,9 @@ export const Game = ({user}: {user: User}) => {
                         <div id='balance-amount'>
                             {balance}
                         </div>
+                        <motion.div id='balance-added' key={balance} style={{color: balanceDifference > 0 ? 'green' : 'red'}} animate={{opacity: [1,0], scale: [1.5, 1], rotateZ: Math.random() * 90, transition: {duration: 1.5}}}> 
+                            {balanceDifference}
+                        </motion.div>
                     </div>
                     <div id='totalprofits-container'>
                         <div id='totalprofits-text'>
@@ -145,6 +152,9 @@ export const Game = ({user}: {user: User}) => {
                         <div id='totalprofits-amount'>
                             {totalProfits}
                         </div>
+                        <motion.div className='balance-added' key={balance} style={{color: balanceDifference > 0 ? 'green' : 'red'}} animate={{opacity: [1,0], scale: [1.5, 1], rotateZ: Math.random() * 90, transition: {duration: 1.5}}}>
+                            {balanceDifference}
+                        </motion.div>
                     </div>
                 </div>
             </div>

@@ -41,7 +41,6 @@ export const Game = ({user}: {user: User}) => {
         }
 
         setGameState(() => response)
-        
     }
     
     const handleDoubleDown = async () => {
@@ -93,12 +92,7 @@ export const Game = ({user}: {user: User}) => {
             setInsuranceDisabled(() => true)
             setDoubleDownDisabled(() => true)
             setHitOrStandDisabled(() => true)
-            return
-        }
 
-        if (!gameState.isGameOver) {
-            setHitOrStandDisabled(() => false)
-        } else {
             const updateBalance = async () => {
                 const resp = await getUserInfo(user.id)
                 if (resp instanceof Error) {
@@ -111,21 +105,24 @@ export const Game = ({user}: {user: User}) => {
             }
             
             updateBalance()
-            setHitOrStandDisabled(() => true)
-        } 
-
-        if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
-            setInsuranceDisabled(() => false)
-        } else {
-            setInsuranceDisabled(() => true)
-        }
-        
-        if (gameState.turnCount === 1 && !gameState.isGameOver && balance >= gameState.betAmount) {
-            setDoubleDownDisabled(() => false)
-        } else {
-            setDoubleDownDisabled(() => true)
-        }
+            //* ran into a bug where if i lost a bet and my balance went under my bet amount, it wouldnt let me change the betAmount
+            if (betAmount > balance) setBetAmount(() => balance)
             
+        } else {
+            setHitOrStandDisabled(() => false)
+
+            if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
+                setInsuranceDisabled(() => false)
+            } else {
+                setInsuranceDisabled(() => true)
+            }
+            
+            if (gameState.turnCount === 1 && balance >= gameState.betAmount) {
+                setDoubleDownDisabled(() => false)
+            } else {
+                setDoubleDownDisabled(() => true)
+            }
+        }
     }, [gameState])
 
     return (

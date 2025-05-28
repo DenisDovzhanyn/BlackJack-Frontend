@@ -98,3 +98,26 @@ export const doubleDown = async (id: string) => {
         if (err instanceof Error) return err
     }
 }
+
+export const getTopEarners = async (id: string) => {
+    try {
+        const resp = await fetch(`${import.meta.env.VITE_BASE_API}/topprofits`,
+            {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify({id})
+            }
+        )
+
+        const respJson = await resp.json()
+        if (resp.status != 200) throw new Error(respJson.error)
+        
+        return respJson.users
+    } catch (err) {
+        console.log(err)
+        if (err instanceof Error) {
+            return err
+        }
+    }
+}

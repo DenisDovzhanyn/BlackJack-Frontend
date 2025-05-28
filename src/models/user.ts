@@ -4,3 +4,8 @@ export interface User {
     balance: number,
     totalProfits: number
 }
+
+export interface topEarner {
+    username: string,
+    totalProfits: number
+}

@@ -1,5 +1,5 @@
 import './game.css'
-import { User } from '../models/user'
+import { topEarner, User } from '../models/user'
 import { useEffect, useState } from 'react'
 import minusFive from '../assets/SVG-cards-1.3/minusfive.svg'
 import minusTen from '../assets/SVG-cards-1.3/minus10.svg'
@@ -8,7 +8,7 @@ import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
 import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
 import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
 import { AnimatePresence, motion, scale } from 'motion/react'
-import { hitOrStand, placeBet, doubleDown } from '../services/gameService'
+import { hitOrStand, placeBet, doubleDown, getTopEarners } from '../services/gameService'
 import { GameDto } from '../models/game'
 import { getUserInfo } from '../services/user'
 
@@ -25,6 +25,8 @@ export const Game = ({user}: {user: User}) => {
     const [doubleDownDisabled, setDoubleDownDisabled] = useState(true)
     const [hitOrStandDisabled, setHitOrStandDisabled] = useState(true)
     const [error, setError] = useState('')
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [topEarners, setTopEarners] = useState<topEarner[]>([])
 
     const handleSetBetAmount = (amount: number) => {
         if (betAmount + amount < 5 || betAmount + amount > balance) return
@@ -89,7 +91,18 @@ export const Game = ({user}: {user: User}) => {
         //* we only need to clear the error here right? if gamestate successfully changes then that means previous error
         //* is gone and no longer a problem. 
         setError('')
+        if (topEarners.length < 1) {
+            const getTopTen = async () => {
+                const resp = await getTopEarners(user.id)
+                if (resp instanceof Error) {
+                    setError(() => resp.message)
+                    return
+                }
 
+                setTopEarners(() => resp)
+            }
+            getTopTen()
+        }
         if (!gameState || gameState.isGameOver) {
             setInsuranceDisabled(() => true)
             setDoubleDownDisabled(() => true)
@@ -127,6 +140,7 @@ export const Game = ({user}: {user: User}) => {
         }
     }, [gameState])
 
+    //TODO MAKE SURE CARDS ARE NOT INTERACTABLE/HOVERABLE WHILE TOP EARNER MODAL IS OPEN
     return (
         <div id='game-screen'>
             <div id='left-side'>
@@ -159,6 +173,11 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='main-stage'>
+                <motion.dialog open={isModalOpen} id='modal'>
+                    {topEarners.map((topEarner) => {
+                        return <div className='top-Earners' key={topEarner.username}>{topEarner.username} {topEarner.totalProfits}</div>
+                    })}
+                </motion.dialog>
                 <div id='dealer-side'>
                     <AnimatePresence mode='popLayout'>
                         {gameState?.dealerHand.cards.map((card) => {
@@ -220,6 +239,9 @@ export const Game = ({user}: {user: User}) => {
                             {betAmount}
                         </motion.div>
                     </div>
+                    <motion.button className='game-button' onClick={() => setIsModalOpen((prev) => !prev)}>
+                        Top Earners
+                    </motion.button>
                 </div>
                 <div id='bottom-right'>
                     <motion.button 

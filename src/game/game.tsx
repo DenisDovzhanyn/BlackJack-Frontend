@@ -143,6 +143,7 @@ export const Game = ({user}: {user: User}) => {
     //TODO MAKE SURE CARDS ARE NOT INTERACTABLE/HOVERABLE WHILE TOP EARNER MODAL IS OPEN
     return (
         <div id='game-screen'>
+            <div id='modal-backdrop' style={isModalOpen ? {display: 'block'} : {display: 'none'}} onClick={() => {setIsModalOpen(() => false)}}></div>
             <div id='left-side'>
                 <div id='username-text'>
                     {user.username}
@@ -173,6 +174,7 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='main-stage'>
+                
                 <motion.dialog open={isModalOpen} id='modal'>
                     {topEarners.map((topEarner) => {
                         return <div className='top-Earners' key={topEarner.username}>{topEarner.username} {topEarner.totalProfits}</div>

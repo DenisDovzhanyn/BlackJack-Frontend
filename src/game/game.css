@@ -52,6 +52,12 @@
     border-radius: 10px;
 
 }
+#modal-backdrop {
+    height: 100vh;
+    width: 100vw;
+    z-index: 1000;
+    position: absolute;
+}
 #dealer-side {
     height: 45%;
     display: flex;

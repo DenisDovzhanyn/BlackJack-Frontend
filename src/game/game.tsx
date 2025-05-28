@@ -69,6 +69,8 @@ export const Game = ({user}: {user: User}) => {
                 setError(() => resp.message)
             } else {
                 setGameState(() => resp)
+                setBalance((prevBalance) => prevBalance - betAmount)
+                setTotalProfits((totalProfits) => totalProfits - betAmount)
             }
         } else {
             const resp = await placeBet(user.id, betAmount, false)
@@ -111,7 +113,7 @@ export const Game = ({user}: {user: User}) => {
         } else {
             setHitOrStandDisabled(() => false)
 
-            if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1) {
+            if (gameState.dealerHand.cards[0].id === 0 && gameState.turnCount === 1 && !gameState.insuranceBet) {
                 setInsuranceDisabled(() => false)
             } else {
                 setInsuranceDisabled(() => true)

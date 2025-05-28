@@ -164,13 +164,13 @@ export const Game = ({user}: {user: User}) => {
                         {gameState?.dealerHand.cards.map((card) => {
                             if (card.name === 'Blank') {
                                 const url = `${ASSET_PATH}black-playing-card-back-25478.svg`
-                                return <motion.img className='card' src= {assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.suit+card.name!}/>
+                                return <motion.img className='card' src= {assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.id+card.suit+card.isFacingUp+card.name+card.value}/>
                             } else if (card.name !== 'Number') {
                                 const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
-                                return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}}  exit={{scale: 0}} key={card.id+card.suit}/>
+                                return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}}  exit={{scale: 0}} key={card.id+card.suit+card.name+card.value+card.isFacingUp}/>
                             } else {
                                 const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
-                                return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}}  exit={{scale: 0}} key={card.name!}/>
+                                return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}}  exit={{scale: 0}} key={card.name+card.id+card.suit+card.isFacingUp+card.value}/>
                             }
                     })}
                     </AnimatePresence>
@@ -182,10 +182,10 @@ export const Game = ({user}: {user: User}) => {
                             {gameState?.playerHand.cards.map((card) => {
                                 if (card.name !== 'Number') {
                                     const url = `${ASSET_PATH + card.name?.toLowerCase()}_of_${card.suit.toLowerCase()}.svg`
-                                    return <motion.img className='card' src={assets[url] ? assets[url] : ''}  whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.suit}/>
+                                    return <motion.img className='card' src={assets[url] ? assets[url] : ''}  whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.suit+card.id+card.isFacingUp+card.name+card.value}/>
                                 } else {
                                     const url = `${ASSET_PATH + card.value}_of_${card.suit.toLowerCase()}.svg`
-                                    return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.id}/>
+                                    return <motion.img className='card' src={assets[url] ? assets[url] : ''} whileHover={{scale: 1.2}} initial={{scale: 0}} animate={{scale: 1}} exit={{scale: 0}} key={card.value+card.id+card.suit+card.isFacingUp+card.name}/>
                             }
                             })}
                         </AnimatePresence>

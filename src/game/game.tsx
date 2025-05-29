@@ -7,7 +7,7 @@ import minusOneHundred from '../assets/SVG-cards-1.3/minus100.svg'
 import plusFive from '../assets/SVG-cards-1.3/plusfive.svg'
 import plusTen from '../assets/SVG-cards-1.3/plusten.svg'
 import plusOneHundred from '../assets/SVG-cards-1.3/plus100.svg'
-import { AnimatePresence, motion, scale } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { hitOrStand, placeBet, doubleDown, getTopEarners } from '../services/gameService'
 import { GameDto } from '../models/game'
 import { getUserInfo } from '../services/user'
@@ -140,7 +140,6 @@ export const Game = ({user}: {user: User}) => {
         }
     }, [gameState])
 
-    //TODO MAKE SURE CARDS ARE NOT INTERACTABLE/HOVERABLE WHILE TOP EARNER MODAL IS OPEN
     return (
         <div id='game-screen'>
             <div id='modal-backdrop' style={isModalOpen ? {display: 'block'} : {display: 'none'}} onClick={() => {setIsModalOpen(() => false)}}></div>
@@ -174,12 +173,22 @@ export const Game = ({user}: {user: User}) => {
                 </div>
             </div>
             <div id='main-stage'>
-                
-                <motion.dialog open={isModalOpen} id='modal'>
-                    {topEarners.map((topEarner) => {
-                        return <div className='top-Earners' key={topEarner.username}>{topEarner.username} {topEarner.totalProfits}</div>
-                    })}
-                </motion.dialog>
+                <AnimatePresence>
+                    {isModalOpen && 
+                    <motion.dialog open={isModalOpen} id='modal' initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
+                        {'Top Earners'}
+                        {topEarners.map((topEarner) => {
+                            return <div className='top-earners' key={topEarner.username}>
+                                <div>
+                                    {topEarner.username}
+                                </div>
+                                <div>
+                                    {topEarner.totalProfits}
+                                </div>
+                            </div>
+                        })}
+                    </motion.dialog>}
+                </AnimatePresence>
                 <div id='dealer-side'>
                     <AnimatePresence mode='popLayout'>
                         {gameState?.dealerHand.cards.map((card) => {

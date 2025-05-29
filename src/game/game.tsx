@@ -250,11 +250,17 @@ export const Game = ({user}: {user: User}) => {
                             {betAmount}
                         </motion.div>
                     </div>
-                    <motion.button className='game-button' onClick={() => setIsModalOpen((prev) => !prev)}>
-                        Top Earners
-                    </motion.button>
+                    
                 </div>
                 <div id='bottom-right'>
+                    <motion.button 
+                    className='game-button' 
+                    onClick={() => setIsModalOpen((prev) => !prev)} 
+                    whileHover={{scale:1.1}} 
+                    whileTap={{scale:0.9}}
+                    style={{marginBottom: 50}}>
+                        Top Earners
+                    </motion.button>
                     <motion.button 
                     id='insurance-button' 
                     className='game-button'

@@ -182,6 +182,7 @@
     background-color: aliceblue;
     text-align: center;
     border-style: none;
+    font-size: 2em;
 }
 
 .game-button:hover {
